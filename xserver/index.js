@@ -14,7 +14,7 @@ const { g, b, gr, r, y } =    require('../console');
 
 // Express app
 const app = express();
-const PORT = process.env.RUN_PORT || 4000
+const PORT = process.env.SCAN_PORT || 4200
 
 const log = (msg) => console.log(msg)
 //////////////////////////////////////////////////////////////////////////
@@ -34,22 +34,20 @@ const createServers = () => {
   return new Promise(async (resolve, reject) => {
     const servers = await events(app)
     resolve(servers)
-  }) 
-  
+  })  
 }
 
-const startBroadcasts = async() => {
-  const servers = await createServers()  
-  const pub = servers['pub']  
+const startScan = async() => {
+  const servers = await createServers()     
   const redis = servers['redis']
   const db = servers['db']
   
   // supports promise as well as other commands
-  redis.monitor().then(function (monitor) {
-      monitor.on('monitor', function (time, args, source, database) {
-        console.log(time + ": " + util.inspect(args));
-      });
-    });
+  // redis.monitor().then(function (monitor) {
+  //     monitor.on('monitor', function (time, args, source, database) {
+  //       console.log(time + ": " + util.inspect(args));
+  //     });
+  //   });
 
   redis.subscribe('device', function (err, count) {
       console.log(`Currently tracking ${count} channels`)
@@ -59,26 +57,17 @@ const startBroadcasts = async() => {
     let msgObj = JSON.parse(msg)
     switch (msgObj.Context) {     
       case 'GeoFence':          
-        console.log(`Channel: ${ channel } Message: ${msg}`);
-        db.collection('signals').insertOne(msgObj)
+        console.log(`RECEIVED FROM: ${ channel } Message: ${msg}`);
+        //db.collection('signals').insertOne(msgObj)
         break;
       default:
         console.log(`------No context detected-----`)    
     }
   });
-
-  setInterval(() => {
-    let msg = {}
-    msg.UUID = uuidv4()
-    msg.Context = "GeoFence" 
-    msg.Timestamp = Date.now()
-    msg.Body = `Discounts today only`
-    pub.publish('device', JSON.stringify(msg))
-  }, 1000)
   
 }
 
-startBroadcasts()
+startScan()
 // let testmsg = 'Tests Started'
 // require('../test')(testmsg)
 
