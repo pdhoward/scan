@@ -1,5 +1,5 @@
 {
-  "name": "stream",
+  "name": "scan",
   "version": "0.7.0",
   "main": "server.js",
   "scripts": {
