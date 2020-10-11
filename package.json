@@ -6,6 +6,10 @@
     "start": "nodemon ./index"
   },
   "dependencies": {
+    "advlib": "^1.0.0",
+    "advlib-ble": "^1.0.0",
+    "advlib-ble-manufacturers": "^1.0.0",
+    "advlib-ble-services": "^1.0.0",
     "chalk": "^4.1.0",
     "dotenv": "^6.2.0",
     "express": "^4.17.1",
