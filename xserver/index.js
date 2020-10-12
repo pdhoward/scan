@@ -86,13 +86,37 @@ startScan()
 //////////////////////////////////////////////////////////////////////////
 ///////  Configuration and Processing of raw packets from BLE    ////////
 ////////////////////////////////////////////////////////////////////////
-// let packets = [
-//   'c21d04acbe55daba16096164766c6962206279207265656c79416374697665',
-//   'c21904acbe55daba1216aafe10fc017265656c7961637469766507',
-//   'c21804acbe55daba1116aafe20000c4815200000004500000258',  
-// ];
+
+// hexadecimal value
+// adType values:
+// https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile/
+// services values:
+// https://www.bluetooth.com/specifications/gatt/services/
+let elementSchema = {
+  "elementOne": {
+    "length": '1 byte',
+    "adType": '1 byte', // ie 1 = flag
+    "value": '1 byte' // for adType of flag, the value is 8 bits, each bit sets a flag
+  },
+  "elementTwo": {
+    "length": '1 byte',
+    "adType": '1 byte', // ie 03 = services
+    "value": "service" // ie 0x1809 = health thermometer - recorder in little endian order - ie 0x1809 = 0918
+  },
+  "elementThree": {
+    "length": "1 byte",
+    "adType": "1 byte",  // ie 09 = compete local name
+    "value": "remainder up to 31 bytes"  // local name
+  }
+}
+// go here to decode https://reelyactive.github.io/advlib/
+let advname = 'c21d04acbe55daba16096164766c6962206279207265656c79416374697665'
+let advurl =  'c21904acbe55daba1216aafe10fc017265656c7961637469766507'
+let advservices =  'c21804acbe55daba1116aafe20000c4815200000004500000258' 
+let thermometer = '020106030309181409546865726d6f6d65746572204578616d706c65'
+let applenearby = '00150000007b209c02011a0bff4c0009060202c0a8006a'
 let packets = [    
-    '49B9CA61-3D7A-CDAE-0D49-1E3707D6391E'
+    applenearby
   ];
 
 let processedPackets = advlib.process(packets, PROCESSORS);
